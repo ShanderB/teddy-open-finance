@@ -15,7 +15,8 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
-
+//TODO mudar esses req.headers para uma função só e Não chamar a mesma coisa toda vez.
+//TODO adicionar a interface dos req.
 @Controller('urls')
 export class UrlController {
 	constructor(
@@ -70,7 +71,14 @@ export class UrlController {
 		@Body('originalUrl') originalUrl: string,
 		@Request() req
 	): Promise<Url> {
-		return this.urlService.updateUrl(id, originalUrl, req.user);
+		let user: User;
+
+		if (req.headers.authorization) {
+			const token = req.headers.authorization.split(' ')[1];
+			const decoded = await this.authService.decodeToken(token);
+			user = await this.usersService.findOne(decoded.email);
+			return this.urlService.updateUrl(id, originalUrl, user);
+		}
 	}
 
 	@UseGuards(JwtAuthGuard)

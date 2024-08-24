@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Url } from './url.entity';
@@ -52,12 +52,16 @@ export class UrlService {
 	}
 
 	async updateUrl(id: number, newOriginalUrl: string, user: User): Promise<Url> {
-		const url = await this.urlRepository.findOne({ where: { id, user, deletedAt: null } });
+		const url = await this.urlRepository.findOne({
+			where: { id, user: { id: user.id }, deletedAt: null }
+		});
+
 		if (url) {
 			url.originalUrl = newOriginalUrl;
 			return this.urlRepository.save(url);
 		}
-		return null;
+
+		throw new NotFoundException('URL with provided information not found');
 	}
 
 	async deleteUrl(id: number, user: User): Promise<void> {
