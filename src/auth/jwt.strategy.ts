@@ -16,6 +16,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
 	async validate(payload: any): Promise<any> {
 		//TODO: Implement this interface
-		return { userId: payload.sub, email: payload.email };
+		return { password: payload.sub, email: payload.email };
 	}
 }

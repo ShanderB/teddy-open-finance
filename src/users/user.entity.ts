@@ -3,8 +3,10 @@ import {
 	Column,
 	PrimaryGeneratedColumn,
 	CreateDateColumn,
-	UpdateDateColumn
+	UpdateDateColumn,
+	OneToMany
 } from 'typeorm';
+import { Url } from '../url/url.entity';
 
 @Entity()
 export class User {
@@ -22,4 +24,7 @@ export class User {
 
 	@UpdateDateColumn()
 	updatedAt: Date;
+
+	@OneToMany(() => Url, url => url.user)
+	urls: Url[];
 }
