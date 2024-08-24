@@ -17,6 +17,7 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 //TODO mudar esses req.headers para uma função só e Não chamar a mesma coisa toda vez.
 //TODO adicionar a interface dos req.
+//TODO adicionar um retorno caso a pessoa não esteja logada.
 @Controller('urls')
 export class UrlController {
 	constructor(
@@ -84,7 +85,14 @@ export class UrlController {
 	@UseGuards(JwtAuthGuard)
 	@Delete(':id')
 	async deleteUrl(@Param('id') id: number, @Request() req): Promise<{ success: boolean }> {
-		await this.urlService.deleteUrl(id, req.user);
-		return { success: true };
+		let user: User;
+
+		if (req.headers.authorization) {
+			const token = req.headers.authorization.split(' ')[1];
+			const decoded = await this.authService.decodeToken(token);
+			user = await this.usersService.findOne(decoded.email);
+			await this.urlService.deleteUrl(id, user);
+			return { success: true };
+		}
 	}
 }

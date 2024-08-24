@@ -70,5 +70,6 @@ export class UrlService {
 			url.deletedAt = new Date();
 			await this.urlRepository.save(url);
 		}
+		throw new NotFoundException('URL id provided not found');
 	}
 }
