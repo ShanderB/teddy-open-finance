@@ -14,8 +14,14 @@ export class UrlService {
 		@InjectRepository(Click)
 		private readonly clickRepository: Repository<Click>
 	) {}
-
+	//TODO ver algo desse coisa @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
 	async shortenUrl(originalUrl: string, user: User): Promise<Url> {
+		const urlDatabase = await this.findUrlByOriginalUrl(originalUrl);
+
+		if (urlDatabase) {
+			return urlDatabase;
+		}
+
 		const shortUrl = crypto
 			.randomBytes(3)
 			.toString('base64')
@@ -27,6 +33,10 @@ export class UrlService {
 
 	async findUrlByShortUrl(shortUrl: string): Promise<Url> {
 		return this.urlRepository.findOne({ where: { shortUrl, deletedAt: null } });
+	}
+
+	async findUrlByOriginalUrl(originalUrl: string): Promise<Url> {
+		return this.urlRepository.findOne({ where: { originalUrl, deletedAt: null } });
 	}
 
 	async trackClick(url: Url): Promise<void> {
