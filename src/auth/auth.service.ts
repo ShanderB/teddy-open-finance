@@ -12,11 +12,9 @@ export class AuthService {
 		private jwtService: JwtService
 	) {}
 
-	async validateUser(email: string, pass: string): Promise<unknown> {
-		//TODO: Implement this interface
+	async validateUser(email: string, pass: string): Promise<User> {
 		const user = await this.usersService.findOne(email);
 		if (user && (await bcrypt.compare(pass, user.password))) {
-			// const { password, ...result } = user;
 			const { ...result } = user;
 			return result;
 		}

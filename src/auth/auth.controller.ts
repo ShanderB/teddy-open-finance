@@ -1,6 +1,7 @@
 import { Controller, Request, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
+import { UserLoginResponse, UserRequest } from 'src/users/interface';
 
 @Controller('auth')
 export class AuthController {
@@ -8,9 +9,7 @@ export class AuthController {
 
 	@UseGuards(LocalAuthGuard)
 	@Post('login')
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	async login(@Request() req) {
-		//TODO: Implement this interface
-		return this.authService.login(req.user);
+	async login(@Request() { user }: UserRequest): Promise<UserLoginResponse> {
+		return this.authService.login(user);
 	}
 }
