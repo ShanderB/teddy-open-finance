@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql/mysql-server:5.7
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: teddy
+      MYSQL_USER: teddy_user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
