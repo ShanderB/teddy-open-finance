@@ -16,6 +16,7 @@ export const jwtConstants = {
 };
 
 export const getOrmConfig = (): TypeOrmModuleOptions => ({
+	//TODO adicionar valores no .env
 	type: 'mysql',
 	host: 'localhost',
 	port: 3306,
