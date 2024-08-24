@@ -5,7 +5,8 @@ import {
 	Get,
 	Param,
 	UseGuards,
-	Request,
+	Response,
+	Headers,
 	Put,
 	Delete
 } from '@nestjs/common';
@@ -15,7 +16,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
-//TODO mudar esses req.headers para uma função só e Não chamar a mesma coisa toda vez.
+//TODO mudar esses validadores de token req.headers para uma função só e Não chamar a mesma coisa toda vez.
 //TODO adicionar a interface dos req.
 //TODO adicionar um retorno caso a pessoa não esteja logada.
 @Controller('urls')
@@ -27,10 +28,13 @@ export class UrlController {
 	) {}
 
 	@Post('shorten')
-	async shortenUrl(@Body('originalUrl') originalUrl: string, @Request() req): Promise<Url> {
+	async shortenUrl(
+		@Headers('authorization') authorization: string,
+		@Body('originalUrl') originalUrl: string
+	): Promise<Url> {
 		let user: User;
-		if (req.headers.authorization) {
-			const token = req.headers.authorization.split(' ')[1];
+		if (authorization) {
+			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
 			user = await this.usersService.findOne(decoded.email);
 		}
@@ -42,23 +46,24 @@ export class UrlController {
 	@Get(':shortUrl')
 	async redirect(
 		@Param('shortUrl') shortUrl: string,
-		@Request() req
+		@Response() res
 	): Promise<{ redirect?: string; error?: string }> {
 		const url = await this.urlService.findUrlByShortUrl(shortUrl);
 		if (url) {
 			await this.urlService.trackClick(url);
-			return { redirect: url.originalUrl };
+			return res.redirect(url.originalUrl);
+			//TODO se não for pelo navegador (postman), retornar uma mensagem dizendo para abrir pelo navegador
 		}
-		return { error: 'URL not found' };
+		return res.status(404).json({ error: 'URL not found' });
 	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
-	async listUrls(@Request() req): Promise<Url[]> {
+	async listUrls(@Headers('authorization') authorization: string): Promise<Url[]> {
 		let user: User;
 
-		if (req.headers.authorization) {
-			const token = req.headers.authorization.split(' ')[1];
+		if (authorization) {
+			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
 			user = await this.usersService.findOne(decoded.email);
 			return this.urlService.listUrlsByUser(user);
@@ -68,14 +73,14 @@ export class UrlController {
 	@UseGuards(JwtAuthGuard)
 	@Put(':id')
 	async updateUrl(
+		@Headers('authorization') authorization: string,
 		@Param('id') id: number,
-		@Body('originalUrl') originalUrl: string,
-		@Request() req
+		@Body('originalUrl') originalUrl: string
 	): Promise<Url> {
 		let user: User;
 
-		if (req.headers.authorization) {
-			const token = req.headers.authorization.split(' ')[1];
+		if (authorization) {
+			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
 			user = await this.usersService.findOne(decoded.email);
 			return this.urlService.updateUrl(id, originalUrl, user);
@@ -84,11 +89,14 @@ export class UrlController {
 
 	@UseGuards(JwtAuthGuard)
 	@Delete(':id')
-	async deleteUrl(@Param('id') id: number, @Request() req): Promise<{ success: boolean }> {
+	async deleteUrl(
+		@Headers('authorization') authorization: string,
+		@Param('id') id: number
+	): Promise<{ success: boolean }> {
 		let user: User;
 
-		if (req.headers.authorization) {
-			const token = req.headers.authorization.split(' ')[1];
+		if (authorization) {
+			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
 			user = await this.usersService.findOne(decoded.email);
 			await this.urlService.deleteUrl(id, user);
