@@ -2,7 +2,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { jwtConstants } from './constants';
-
+//TODO acho que isso não está sendo usado.
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor() {

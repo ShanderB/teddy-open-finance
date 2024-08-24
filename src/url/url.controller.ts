@@ -12,14 +12,25 @@ import {
 import { UrlService } from './url.service';
 import { Url } from './url.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { AuthService } from 'src/auth/auth.service';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('urls')
 export class UrlController {
-	constructor(private readonly urlService: UrlService) {}
+	constructor(
+		private readonly urlService: UrlService,
+		private readonly authService: AuthService,
+		private readonly usersService: UsersService
+	) {}
 
 	@Post('shorten')
 	async shortenUrl(@Body('originalUrl') originalUrl: string, @Request() req): Promise<Url> {
-		const user = req.user || null;
+		const token = req.headers.authorization.split(' ')[1];
+        //TODO se o token for inválido, dá erro e trava tudo.
+		const decoded = await this.authService.decodeToken(token);
+		const user = await this.usersService.findOne(decoded.email);
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		return this.urlService.shortenUrl(originalUrl, user);
 	}
 
