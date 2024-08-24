@@ -25,5 +25,5 @@ export const getOrmConfig = (): TypeOrmModuleOptions => ({
 	database: 'teddy',
 	//TODO checar esse regex
 	entities: ['dist/**/*.entity{.ts,.js}'],
-	synchronize: false
+	synchronize: true
 });
