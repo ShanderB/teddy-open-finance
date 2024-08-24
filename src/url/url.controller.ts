@@ -14,6 +14,7 @@ import { Url } from './url.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/user.entity';
 
 @Controller('urls')
 export class UrlController {
@@ -25,10 +26,12 @@ export class UrlController {
 
 	@Post('shorten')
 	async shortenUrl(@Body('originalUrl') originalUrl: string, @Request() req): Promise<Url> {
-		const token = req.headers.authorization.split(' ')[1];
-        //TODO se o token for inválido, dá erro e trava tudo.
-		const decoded = await this.authService.decodeToken(token);
-		const user = await this.usersService.findOne(decoded.email);
+		let user: User;
+		if (req.headers.authorization) {
+			const token = req.headers.authorization.split(' ')[1];
+			const decoded = await this.authService.decodeToken(token);
+			user = await this.usersService.findOne(decoded.email);
+		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		return this.urlService.shortenUrl(originalUrl, user);
