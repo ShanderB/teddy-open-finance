@@ -1,27 +1,36 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
+import { UsersModule } from '../users/users.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './constants';
 import { JwtStrategy } from './jwt.strategy';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as passport from 'passport';
 import { AuthController } from './auth.controller';
 
 @Module({
 	imports: [
 		UsersModule,
 		PassportModule,
-		JwtModule.registerAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: async (configService: ConfigService) => ({
-				secret: configService.get<string>('JWT_SECRET'),
-				signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') }
-			})
+		JwtModule.register({
+			secret: jwtConstants.secret,
+			signOptions: { expiresIn: jwtConstants.expiresIn }
 		})
 	],
 	providers: [AuthService, LocalStrategy, JwtStrategy],
+	exports: [AuthService],
 	controllers: [AuthController]
 })
-export class AuthModule {}
+export class AuthModule {
+	constructor(private readonly authService: AuthService) {
+		passport.serializeUser((user, done) => {
+			done(null, user.id);
+		});
+
+		passport.deserializeUser(async (id, done) => {
+			const user = await this.authService.login(id);
+			done(null, user);
+		});
+	}
+}
