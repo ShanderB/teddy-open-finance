@@ -5,7 +5,8 @@ import { Url } from './url.entity';
 import { User } from '../users/user.entity';
 import { Click } from './click.entity';
 import * as crypto from 'crypto';
-
+//TODO adicionar um Redis para cache
+//TODO algo para previnir ataques de DDOS
 @Injectable()
 export class UrlService {
 	constructor(

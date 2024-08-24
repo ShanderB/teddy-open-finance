@@ -9,6 +9,7 @@ export class UsersController {
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
 	async register(@Body() body: { email: string; password: string }) {
 		//TODO Implement this interface
+		//TODO se existir, retornar um erro
 		return this.usersService.create(body.email, body.password);
 	}
 }
