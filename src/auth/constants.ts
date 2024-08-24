@@ -16,13 +16,12 @@ export const jwtConstants = {
 };
 
 export const getOrmConfig = (): TypeOrmModuleOptions => ({
-	//TODO adicionar valores no .env
-	type: 'mysql',
-	host: 'localhost',
-	port: 3306,
-	username: 'teddy_user',
-	password: 'password',
-	database: 'teddy',
+	type: configService.get<string>('DB_TYPE') as 'mysql',
+	host: configService.get<string>('DB_HOST'),
+	port: configService.get<number>('DB_PORT'),
+	username: configService.get<string>('DB_USERNAME'),
+	password: configService.get<string>('DB_PASSWORD'),
+	database: configService.get<string>('DB_DATABASE'),
 	//TODO checar esse regex
 	entities: ['dist/**/*.entity{.ts,.js}'],
 	synchronize: true
