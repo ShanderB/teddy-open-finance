@@ -45,7 +45,10 @@ export class UrlService {
 	}
 
 	async listUrlsByUser(user: User): Promise<Url[]> {
-		return this.urlRepository.find({ where: { user, deletedAt: null }, relations: ['clicks'] });
+		return this.urlRepository.find({
+			where: { user: { id: user.id }, deletedAt: null },
+			relations: ['clicks']
+		});
 	}
 
 	async updateUrl(id: number, newOriginalUrl: string, user: User): Promise<Url> {

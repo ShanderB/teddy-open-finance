@@ -53,7 +53,14 @@ export class UrlController {
 	@UseGuards(JwtAuthGuard)
 	@Get()
 	async listUrls(@Request() req): Promise<Url[]> {
-		return this.urlService.listUrlsByUser(req.user);
+		let user: User;
+
+		if (req.headers.authorization) {
+			const token = req.headers.authorization.split(' ')[1];
+			const decoded = await this.authService.decodeToken(token);
+			user = await this.usersService.findOne(decoded.email);
+			return this.urlService.listUrlsByUser(user);
+		}
 	}
 
 	@UseGuards(JwtAuthGuard)
