@@ -23,6 +23,8 @@ services:
       - "3000:3000"
     depends_on:
       - mysql
+    environment:
+      DB_HOST: mysql
 
 volumes:
   mysql_data:

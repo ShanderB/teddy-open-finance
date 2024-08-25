@@ -23,7 +23,8 @@ export const getOrmConfig = (): TypeOrmModuleOptions => ({
 	password: configService.get<string>('DB_PASSWORD'),
 	database: configService.get<string>('DB_DATABASE'),
 	entities: ['dist/**/*.entity{.ts,.js}'],
-	synchronize: true
+	synchronize: true,
+	cache: true
 });
 
 export const getMiscConfig = (): { showDeletedUrls: string } => ({
