@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getOrmConfig } from './auth/constants';
 import { UrlModule } from './url/url.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
 	imports: [
@@ -15,9 +17,15 @@ import { UrlModule } from './url/url.module';
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: () => getOrmConfig()
-		})
+		}),
+		ThrottlerModule.forRoot([{ ttl: 10000, limit: 10, blockDuration: 10000 }])
 	],
 	controllers: [],
-	providers: []
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: ThrottlerGuard
+		}
+	]
 })
 export class AppModule {}
