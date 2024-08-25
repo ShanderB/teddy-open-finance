@@ -28,6 +28,7 @@ NodeJS (versão maior que 18. Caso menor, algumas dependências serão incompat�
 - `MySQL` no `TypeORM` com tabelas relacionais.
 - `UseGuards` para correta utilização de bearer sem precisar fazer toda a lógica de autenticação a cada request.
 - `bcryptjs` para criptografar senhas.
+- Github Actions: Criado eslint para a cada commit verificar se existe alguma coisa que faltou. Utilizei o Husky mas rodando no container ficava com problemas.
 
 ## Iniciar o Projeto
 
