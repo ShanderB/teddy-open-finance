@@ -8,7 +8,8 @@ import {
 	Response,
 	Headers,
 	Put,
-	Delete
+	Delete,
+	BadRequestException
 } from '@nestjs/common';
 import { UrlService } from './url.service';
 import { Url } from './url.entity';
@@ -17,7 +18,26 @@ import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 import { Response as ExpressRes } from 'express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+	deleteUrlApiOperation,
+	deleteUrlApiResponse200,
+	deleteUrlApiResponse404,
+	listUrlsApiOperation,
+	listUrlsApiResponse200,
+	redirectApiOperation,
+	redirectApiResponse200,
+	redirectApiResponse404,
+	redirectApiResponse421,
+	shortenUrlApiOperation,
+	urlApiParam,
+	shortenUrlApiResponse,
+	updateUrlApiOperation,
+	updateUrlApiResponse200
+} from './url.swagger';
 
+@ApiTags('Urls')
+@ApiBearerAuth()
 @Controller('urls')
 export class UrlController {
 	constructor(
@@ -27,15 +47,29 @@ export class UrlController {
 	) {}
 
 	@Post('shorten')
+	@shortenUrlApiOperation
+	@shortenUrlApiResponse
+	@urlApiParam
 	async shortenUrl(
 		@Headers('authorization') authorization: string,
 		@Body('originalUrl') originalUrl: string
 	): Promise<Url> {
-		const user: User = await this.getUserFromToken(authorization);
+		let user: User;
+		if (!originalUrl.trim()) {
+			throw new BadRequestException('É necessário adicionar uma URL.');
+		}
+
+		if (authorization) {
+			user = await this.getUserFromToken(authorization);
+		}
 		return this.urlService.shortenUrl(originalUrl, user);
 	}
 
 	@Get(':shortUrl')
+	@redirectApiOperation
+	@redirectApiResponse200
+	@redirectApiResponse404
+	@redirectApiResponse421
 	async redirect(
 		@Headers('user-agent') userAgent: string,
 		@Param('shortUrl') shortUrl: string,
@@ -58,6 +92,9 @@ export class UrlController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
+	@urlApiParam
+	@listUrlsApiOperation
+	@listUrlsApiResponse200
 	async listUrls(@Headers('authorization') authorization: string): Promise<Url[]> {
 		const user: User = await this.getUserFromToken(authorization);
 		return this.urlService.listUrlsByUser(user);
@@ -65,6 +102,9 @@ export class UrlController {
 
 	@UseGuards(JwtAuthGuard)
 	@Put(':id')
+	@updateUrlApiOperation
+	@updateUrlApiResponse200
+	@urlApiParam
 	async updateUrl(
 		@Headers('authorization') authorization: string,
 		@Param('id') id: number,
@@ -76,6 +116,10 @@ export class UrlController {
 
 	@UseGuards(JwtAuthGuard)
 	@Delete(':id')
+	@deleteUrlApiOperation
+	@deleteUrlApiResponse200
+	@deleteUrlApiResponse404
+	@urlApiParam
 	async deleteUrl(
 		@Headers('authorization') authorization: string,
 		@Param('id') id: number
