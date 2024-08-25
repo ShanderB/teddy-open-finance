@@ -32,8 +32,10 @@ NodeJS (versão maior que 18. Caso menor, algumas dependências serão incompat�
 ## Iniciar o Projeto
 
 - Caso `Ubuntu`, rode o `start.sh`, se for `Windows`, rode o `start.bat`.
-- Por questões de desenvolvimento, você pode iniciar `./start.sh iniciar-npm` que além de iniciar o composer do banco de dados, iniciará o projeto `Nest` e o `Swagger`. Deixei o console do `docker` attached para ser mais fácil de encerrar o container (simplesmente encerrar o terminal).
-  Caso você não utilize o argumento na inicialização, o `docker` inicializará somente com o banco de dados, tendo você que manualmente instalar e iniciar o projeto. Caso inicie o container `Nest`, as configurações de integração irão apontar para o network do `DB`, caso inicie sem o `Nest`, iniciará de fora apontando para o container.
+
+- Por questões de desenvolvimento, você pode iniciar `./start.sh iniciar-npm` que além de iniciar o composer do banco de dados, iniciará o projeto `Nest` e o `Swagger`. Deixei o console do `docker` attached para ser mais fácil de encerrar o container (simplesmente encerrar o terminal). Aguarde alguns segundos após o container ser inicializado (a depender de sua máquina/internet, levará alguns segundos até o projeto rodar o `npm install`)
+
+- Caso você não utilize o argumento na inicialização, o `docker` inicializará somente com o banco de dados, tendo você que manualmente instalar e iniciar o projeto. Caso inicie o container `Nest`, fiz as configurações de integração que irão apontar o container para o network do `DB`, e caso inicie sem o `Nest`, iniciará de fora apontando para o container.
 
 ## Autenticação e Autorização
 
@@ -61,3 +63,17 @@ Pode-se fazer a lógica de: ao cadastrar, fazer automaticamente o login.
 Optei por não fazer assim para deixar separado e ficar simples o entendimento, mas essa mudança é extremamente fácil, sendo necessário apenas chamar o endpoint de login passando o `email` e a `senha` no request, sem segredo algum.
 
 Swagger URL: http://localhost:3000/api
+
+## Melhorias
+
+- Adicionar DTO. Não adicionei para justamente retornar o response completo para melhor validação.
+- Adicionar logs 
+
+--------
+criar DTOS
+criar populate de banco
+apagar o docker, iniciar e fazer um get de url
+Ajustas as pastas, talvez separar um pouco mais.
+
+Definir e assegurar quais versões do NodeJS são aceitas no projeto
+Configurar pré commit ou pre push hooks.
