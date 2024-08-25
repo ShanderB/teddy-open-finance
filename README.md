@@ -69,7 +69,6 @@ Swagger URL: http://localhost:3000/api
 - Adicionar DTO. Não adicionei para justamente retornar o response completo para melhor validação.
 - Adicionar logs 
 
---------
 criar DTOS
 criar populate de banco
 apagar o docker, iniciar e fazer um get de url
