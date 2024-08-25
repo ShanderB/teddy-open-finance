@@ -36,10 +36,9 @@ export class UrlController {
 		if (authorization) {
 			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findOne(decoded.email);
+			user = await this.usersService.findByEmail(decoded.email);
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		return this.urlService.shortenUrl(originalUrl, user);
 	}
 
@@ -65,7 +64,7 @@ export class UrlController {
 		if (authorization) {
 			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findOne(decoded.email);
+			user = await this.usersService.findByEmail(decoded.email);
 			return this.urlService.listUrlsByUser(user);
 		}
 	}
@@ -82,7 +81,7 @@ export class UrlController {
 		if (authorization) {
 			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findOne(decoded.email);
+			user = await this.usersService.findByEmail(decoded.email);
 			return this.urlService.updateUrl(id, originalUrl, user);
 		}
 	}
@@ -98,7 +97,7 @@ export class UrlController {
 		if (authorization) {
 			const token = authorization.split(' ')[1];
 			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findOne(decoded.email);
+			user = await this.usersService.findByEmail(decoded.email);
 			await this.urlService.deleteUrl(id, user);
 			return { success: true };
 		}

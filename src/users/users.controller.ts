@@ -1,15 +1,18 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, ConflictException } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { User } from './user.entity';
 
 @Controller('users')
 export class UsersController {
 	constructor(private usersService: UsersService) {}
 
 	@Post('register')
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-	async register(@Body() body: { email: string; password: string }) {
-		//TODO Implement this interface
-		//TODO se existir, retornar um erro
+	async register(@Body() body: { email: string; password: string }): Promise<User> {
+		const existingUser = await this.usersService.findByEmail(body.email);
+		if (existingUser) {
+			throw new ConflictException('User already exists');
+		}
+
 		return this.usersService.create(body.email, body.password);
 	}
 }
