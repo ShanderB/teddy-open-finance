@@ -14,6 +14,15 @@ Docker 27.1.2 (Ubuntu)
 NodeJS (versão maior que 18. Caso menor, algumas dependências serão incompatível.)
 
 
+## Iniciar o Projeto
+
+- Caso `Ubuntu`, rode o `start.sh`, se for `Windows`, rode o `start.bat`.
+
+- Por questões de desenvolvimento, você pode iniciar `./start.sh iniciar-npm` que além de iniciar o composer do banco de dados, iniciará o projeto `Nest` e o `Swagger`. Deixei o console do `docker` attached para ser mais fácil de encerrar o container (simplesmente encerrar o terminal). Aguarde alguns segundos após o container ser inicializado (a depender de sua máquina/internet, levará alguns segundos até o projeto rodar o `npm install`)
+
+- Caso você não utilize o argumento na inicialização, o `docker` inicializará somente com o banco de dados, tendo você que manualmente instalar e iniciar o projeto. Caso inicie o container `Nest`, fiz as configurações de integração que irá apontar do container `Nest` para o container do `MySQL`, e caso inicie sem o `Nest`, o projeto rodando local será apontando para o container.
+
+
 ## Frameworks, Ferramentas e Metodologias
 
 - `NestJS`
@@ -30,14 +39,6 @@ NodeJS (versão maior que 18. Caso menor, algumas dependências serão incompat�
 - `UseGuards` para correta utilização de bearer sem precisar fazer toda a lógica de autenticação a cada request.
 - `bcryptjs` para criptografar senhas.
 - Github Actions: Criado eslint para a cada commit verificar se existe alguma coisa que faltou. Utilizei o Husky mas rodando no container ficava com problemas.
-
-## Iniciar o Projeto
-
-- Caso `Ubuntu`, rode o `start.sh`, se for `Windows`, rode o `start.bat`.
-
-- Por questões de desenvolvimento, você pode iniciar `./start.sh iniciar-npm` que além de iniciar o composer do banco de dados, iniciará o projeto `Nest` e o `Swagger`. Deixei o console do `docker` attached para ser mais fácil de encerrar o container (simplesmente encerrar o terminal). Aguarde alguns segundos após o container ser inicializado (a depender de sua máquina/internet, levará alguns segundos até o projeto rodar o `npm install`)
-
-- Caso você não utilize o argumento na inicialização, o `docker` inicializará somente com o banco de dados, tendo você que manualmente instalar e iniciar o projeto. Caso inicie o container `Nest`, fiz as configurações de integração que irá apontar do container `Nest` para o container do `MySQL`, e caso inicie sem o `Nest`, o projeto rodando local será apontando para o container.
 
 ## Autenticação e Autorização
 
