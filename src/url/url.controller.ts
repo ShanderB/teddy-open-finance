@@ -8,7 +8,8 @@ import {
 	Response,
 	Headers,
 	Put,
-	Delete
+	Delete,
+	NotFoundException
 } from '@nestjs/common';
 import { UrlService } from './url.service';
 import { Url } from './url.entity';
@@ -88,6 +89,7 @@ export class UrlController {
 	private async getUserFromToken(authorization: string): Promise<User> {
 		const token = authorization.split(' ')[1];
 		const decoded = await this.authService.decodeToken(token);
-		return this.usersService.findByEmail(decoded.email);
+		const user = await this.usersService.findByEmail(decoded.email);
+		return user;
 	}
 }
