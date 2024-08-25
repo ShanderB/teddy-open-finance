@@ -31,11 +31,14 @@ export class UrlService {
 	}
 
 	async findUrlByShortUrl(shortUrl: string): Promise<Url> {
-		return this.urlRepository.findOne({ where: { shortUrl, deletedAt: null }, cache: true });
+		return this.urlRepository.findOne({ where: { shortUrl, deletedAt: Equal(null) }, cache: true });
 	}
 
 	async findUrlByOriginalUrl(originalUrl: string): Promise<Url> {
-		return this.urlRepository.findOne({ where: { originalUrl, deletedAt: null }, cache: true });
+		return this.urlRepository.findOne({
+			where: { originalUrl, deletedAt: Equal(null) },
+			cache: true
+		});
 	}
 
 	async trackClick(url: Url): Promise<void> {
@@ -45,14 +48,14 @@ export class UrlService {
 
 	async listUrlsByUser(user: User): Promise<Url[]> {
 		return this.urlRepository.find({
-			where: { user: { id: user.id }, deletedAt: null },
+			where: { user: { id: user.id }, deletedAt: Equal(null) },
 			relations: ['clicks']
 		});
 	}
 
 	async updateUrl(id: number, newOriginalUrl: string, user: User): Promise<Url> {
 		const url = await this.urlRepository.findOne({
-			where: { id, user: { id: user.id }, deletedAt: null },
+			where: { id, user: { id: user.id }, deletedAt: Equal(null) },
 			cache: true
 		});
 
