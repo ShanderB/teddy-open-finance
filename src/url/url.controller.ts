@@ -18,8 +18,6 @@ import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 import { Response as ExpressRes } from 'express';
 
-//TODO mudar esses validadores de token req.headers para uma função só e Não chamar a mesma coisa toda vez.
-//TODO adicionar um retorno caso a pessoa não esteja logada.
 @Controller('urls')
 export class UrlController {
 	constructor(
@@ -33,22 +31,19 @@ export class UrlController {
 		@Headers('authorization') authorization: string,
 		@Body('originalUrl') originalUrl: string
 	): Promise<Url> {
-		let user: User;
-		if (authorization) {
-			const token = authorization.split(' ')[1];
-			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findByEmail(decoded.email);
-		}
-
+		const user: User = await this.getUserFromToken(authorization);
 		return this.urlService.shortenUrl(originalUrl, user);
 	}
 
 	@Get(':shortUrl')
-	async redirect(@Param('shortUrl') shortUrl: string, @Response() res: ExpressRes): Promise<void> {
+	async redirect(
+		@Headers('user-agent') userAgent: string,
+		@Param('shortUrl') shortUrl: string,
+		@Response() res: ExpressRes
+	): Promise<void> {
 		const url = await this.urlService.findUrlByShortUrl(shortUrl);
 		if (url) {
 			await this.urlService.trackClick(url);
-			const userAgent = res.req.headers['user-agent'];
 			const isBrowser = /Mozilla|Chrome|Safari|Firefox|Edge/.test(userAgent);
 
 			if (isBrowser) {
@@ -64,14 +59,8 @@ export class UrlController {
 	@UseGuards(JwtAuthGuard)
 	@Get()
 	async listUrls(@Headers('authorization') authorization: string): Promise<Url[]> {
-		let user: User;
-
-		if (authorization) {
-			const token = authorization.split(' ')[1];
-			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findByEmail(decoded.email);
-			return this.urlService.listUrlsByUser(user);
-		}
+		const user: User = await this.getUserFromToken(authorization);
+		return this.urlService.listUrlsByUser(user);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -81,14 +70,8 @@ export class UrlController {
 		@Param('id') id: number,
 		@Body('originalUrl') originalUrl: string
 	): Promise<Url> {
-		let user: User;
-
-		if (authorization) {
-			const token = authorization.split(' ')[1];
-			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findByEmail(decoded.email);
-			return this.urlService.updateUrl(id, originalUrl, user);
-		}
+		const user: User = await this.getUserFromToken(authorization);
+		return this.urlService.updateUrl(id, originalUrl, user);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -97,14 +80,14 @@ export class UrlController {
 		@Headers('authorization') authorization: string,
 		@Param('id') id: number
 	): Promise<{ success: boolean }> {
-		let user: User;
+		const user: User = await this.getUserFromToken(authorization);
+		await this.urlService.deleteUrl(id, user);
+		return { success: true };
+	}
 
-		if (authorization) {
-			const token = authorization.split(' ')[1];
-			const decoded = await this.authService.decodeToken(token);
-			user = await this.usersService.findByEmail(decoded.email);
-			await this.urlService.deleteUrl(id, user);
-			return { success: true };
-		}
+	private async getUserFromToken(authorization: string): Promise<User> {
+		const token = authorization.split(' ')[1];
+		const decoded = await this.authService.decodeToken(token);
+		return this.usersService.findByEmail(decoded.email);
 	}
 }
