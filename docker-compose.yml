@@ -25,6 +25,9 @@ services:
       - mysql
     environment:
       DB_HOST: mysql
+    deploy:
+      replicas: ${NESTJS_REPLICAS:-0}
+
 
 volumes:
   mysql_data:
