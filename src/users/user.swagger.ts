@@ -32,17 +32,7 @@ export const registerApiOperation = ApiOperation({
 	},
 	responses: {
 		200: {
-			description: 'Usuário registrado com sucesso',
-			content: {
-				'application/json': {
-					example: {
-						id: 1,
-						email: 'user@example.com',
-						createdAt: '2023-01-01T00:00:00.000Z',
-						updatedAt: '2023-01-01T00:00:00.000Z'
-					}
-				}
-			}
+			description: 'Usuário registrado com sucesso'
 		},
 		409: {
 			description: 'Conflito - Usuário já existe'
