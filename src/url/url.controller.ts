@@ -33,7 +33,9 @@ import {
 	urlApiParam,
 	shortenUrlApiResponse,
 	updateUrlApiOperation,
-	updateUrlApiResponse200
+	updateUrlApiResponse200,
+	updateUrlApiResponse404,
+	urlsApiResponse401
 } from './url.swagger';
 
 @ApiTags('Urls')
@@ -95,6 +97,7 @@ export class UrlController {
 	@urlApiParam
 	@listUrlsApiOperation
 	@listUrlsApiResponse200
+	@urlsApiResponse401
 	async listUrls(@Headers('authorization') authorization: string): Promise<Url[]> {
 		const user: User = await this.getUserFromToken(authorization);
 		return this.urlService.listUrlsByUser(user);
@@ -104,6 +107,8 @@ export class UrlController {
 	@Put(':id')
 	@updateUrlApiOperation
 	@updateUrlApiResponse200
+	@updateUrlApiResponse404
+	@urlsApiResponse401
 	@urlApiParam
 	async updateUrl(
 		@Headers('authorization') authorization: string,

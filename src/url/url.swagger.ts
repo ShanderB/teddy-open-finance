@@ -7,6 +7,11 @@ export const urlApiParam = ApiParam({
 	required: false
 });
 
+export const urlsApiResponse401 = ApiResponse({
+	status: 401,
+	description: 'Token inválido ou não fornecido.'
+});
+
 //Inicio Endpoint "shorten"
 export const shortenUrlApiOperation = ApiOperation({
 	summary: 'Registrar os usuários',
@@ -50,7 +55,7 @@ export const shortenUrlApiResponse = ApiResponse({
 export const redirectApiOperation = ApiOperation({
 	summary: 'Redirecionar para a URL original',
 	description:
-		'Este endpoint é responsável por redirecionar o usuário para a URL original. Caso seja um browser, redireciona para a URL original, caso contrário, retorna um erro 421.',
+		'Este endpoint é responsável por redirecionar o usuário para a URL original.<br>Caso seja um browser, redireciona para a URL original, caso contrário, retorna erro 421.',
 	responses: {
 		200: {
 			description: 'Redirecionado com sucesso.'
@@ -96,11 +101,38 @@ export const listUrlsApiResponse200 = ApiResponse({
 //Inicio Endpoint de updateUrl
 export const updateUrlApiOperation = ApiOperation({
 	summary: 'Atualizar URL',
-	description: 'Este endpoint é responsável por atualizar a URL.'
+	description:
+		'Este endpoint é responsável por atualizar a URL. Passe o ID do endpoint como parâmetro e a nova URL como body.',
+	requestBody: {
+		required: true,
+		content: {
+			'application/json': {
+				schema: {
+					type: 'object',
+					properties: {
+						originalUrl: { type: 'string', example: 'https://example.com' }
+					},
+					required: ['originalUrl', 'newUrl']
+				},
+				examples: {
+					example1: {
+						summary: 'Exemplo de atualização de URL',
+						value: {
+							originalUrl: 'https://example.com'
+						}
+					}
+				}
+			}
+		}
+	}
 });
 export const updateUrlApiResponse200 = ApiResponse({
 	status: 200,
 	description: 'Atualizado com sucesso.'
+});
+export const updateUrlApiResponse404 = ApiResponse({
+	status: 404,
+	description: 'URL não encontrada.'
 });
 //Fim Endpoint de updateUrl
 
