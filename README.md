@@ -4,6 +4,7 @@
 
 Projeto feito para vaga backend Teddy Open Finance.
 Adicionei o `.env` apenas para facilitar, mas sei que em uma situação normal não é algo que se faz. Sendo um projeto de entrevista, creio que seja melhor deixar.
+Projeto testado em 2 computadores Windows e 2 em Ubuntu (20.04 e 24).
 
 ## Requisitos
 
