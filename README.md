@@ -70,6 +70,3 @@ Swagger URL: http://localhost:3000/api
 - Adicionar DTO. Não adicionei para justamente retornar o response completo para melhor validação.
 - Adicionar logs.
 - Popular o banco inicialmente (já fiz utilando o próprio docker compose. Crio um arquivo com as querys, o container é executado, meu arquivo de query é passado para o container e executado, populando o banco)
-- 
-
-Ajustas as pastas, talvez separar um pouco mais.
