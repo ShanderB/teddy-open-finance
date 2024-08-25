@@ -25,3 +25,7 @@ export const getOrmConfig = (): TypeOrmModuleOptions => ({
 	entities: ['dist/**/*.entity{.ts,.js}'],
 	synchronize: true
 });
+
+export const getMiscConfig = (): { showDeletedUrls: string } => ({
+	showDeletedUrls: configService.get<string>('SHOW_DELETED_URLS')
+});

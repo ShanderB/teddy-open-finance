@@ -5,6 +5,7 @@ import { Url } from './url.entity';
 import { User } from '../users/user.entity';
 import { Click } from './click.entity';
 import * as crypto from 'crypto';
+import { getMiscConfig } from 'src/auth/constants';
 
 @Injectable()
 export class UrlService {
@@ -48,7 +49,11 @@ export class UrlService {
 
 	async listUrlsByUser(user: User): Promise<Url[]> {
 		return this.urlRepository.find({
-			where: { user: { id: user.id }, deletedAt: Equal(null) },
+			where: {
+				user: { id: user.id },
+				//If the user wants to see the deleted urls, it will show them, otherwise it will not show.
+				...(getMiscConfig().showDeletedUrls === 'false' && { deletedAt: Equal(null) })
+			},
 			relations: ['clicks']
 		});
 	}
