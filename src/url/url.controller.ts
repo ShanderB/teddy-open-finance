@@ -8,8 +8,7 @@ import {
 	Response,
 	Headers,
 	Put,
-	Delete,
-	NotFoundException
+	Delete
 } from '@nestjs/common';
 import { UrlService } from './url.service';
 import { Url } from './url.entity';

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, IsNull, Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Url } from './url.entity';
 import { User } from '../users/user.entity';
 import { Click } from './click.entity';
