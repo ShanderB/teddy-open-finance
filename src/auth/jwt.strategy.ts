@@ -2,7 +2,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { jwtConstants } from './constants';
-//TODO acho que isso não está sendo usado.
+import { JwtPayload, JwtUser } from './interface';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor() {
@@ -13,9 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		});
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types
-	async validate(payload: any): Promise<any> {
-		//TODO: Implement this interface
+	async validate(payload: JwtPayload): Promise<JwtUser> {
 		return { password: payload.sub, email: payload.email };
 	}
 }

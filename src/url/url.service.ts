@@ -1,12 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { Url } from './url.entity';
 import { User } from '../users/user.entity';
 import { Click } from './click.entity';
 import * as crypto from 'crypto';
-//TODO adicionar um Redis para cache
-//TODO algo para previnir ataques de DDOS
+
 @Injectable()
 export class UrlService {
 	constructor(
@@ -15,7 +14,6 @@ export class UrlService {
 		@InjectRepository(Click)
 		private readonly clickRepository: Repository<Click>
 	) {}
-	//TODO ver algo desse coisa @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
 	async shortenUrl(originalUrl: string, user: User): Promise<Url> {
 		const urlDatabase = await this.findUrlByOriginalUrl(originalUrl);
 
@@ -33,11 +31,11 @@ export class UrlService {
 	}
 
 	async findUrlByShortUrl(shortUrl: string): Promise<Url> {
-		return this.urlRepository.findOne({ where: { shortUrl, deletedAt: null } });
+		return this.urlRepository.findOne({ where: { shortUrl, deletedAt: null }, cache: true });
 	}
 
 	async findUrlByOriginalUrl(originalUrl: string): Promise<Url> {
-		return this.urlRepository.findOne({ where: { originalUrl, deletedAt: null } });
+		return this.urlRepository.findOne({ where: { originalUrl, deletedAt: null }, cache: true });
 	}
 
 	async trackClick(url: Url): Promise<void> {
@@ -54,7 +52,8 @@ export class UrlService {
 
 	async updateUrl(id: number, newOriginalUrl: string, user: User): Promise<Url> {
 		const url = await this.urlRepository.findOne({
-			where: { id, user: { id: user.id }, deletedAt: null }
+			where: { id, user: { id: user.id }, deletedAt: null },
+			cache: true
 		});
 
 		if (url) {
@@ -66,10 +65,15 @@ export class UrlService {
 	}
 
 	async deleteUrl(id: number, user: User): Promise<void> {
-		const url = await this.urlRepository.findOne({ where: { id, user, deletedAt: null } });
+		const url = await this.urlRepository.findOne({
+			where: { id, user: { id: user.id }, deletedAt: Equal(null) },
+			cache: true
+		});
+
 		if (url) {
 			url.deletedAt = new Date();
 			await this.urlRepository.save(url);
+			return;
 		}
 		throw new NotFoundException('URL id provided not found');
 	}
