@@ -48,9 +48,15 @@ export class UrlController {
 		const url = await this.urlService.findUrlByShortUrl(shortUrl);
 		if (url) {
 			await this.urlService.trackClick(url);
-			res.redirect(url.originalUrl);
+			const userAgent = res.req.headers['user-agent'];
+			const isBrowser = /Mozilla|Chrome|Safari|Firefox|Edge/.test(userAgent);
+
+			if (isBrowser) {
+				res.redirect(url.originalUrl);
+			} else {
+				res.status(421).json({ message: 'Please open this URL in a web browser.' });
+			}
 			return;
-			//TODO se não for pelo navegador (postman), retornar uma mensagem dizendo para abrir pelo navegador
 		}
 		res.status(404).json({ error: 'URL not found' });
 	}
