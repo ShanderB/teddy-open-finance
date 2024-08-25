@@ -6,7 +6,7 @@ echo "Iniciando docker compose com endpoints NestJS"
 else
 echo "Iniciando docker compose sem endpoints NestJS"
   export NESTJS_REPLICAS=0
-  npm start
+  npm i && npm start
 fi
 
 docker compose up -d
