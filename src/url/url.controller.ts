@@ -16,8 +16,9 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
+import { Response as ExpressRes } from 'express';
+
 //TODO mudar esses validadores de token req.headers para uma função só e Não chamar a mesma coisa toda vez.
-//TODO adicionar a interface dos req.
 //TODO adicionar um retorno caso a pessoa não esteja logada.
 @Controller('urls')
 export class UrlController {
@@ -43,17 +44,15 @@ export class UrlController {
 	}
 
 	@Get(':shortUrl')
-	async redirect(
-		@Param('shortUrl') shortUrl: string,
-		@Response() res
-	): Promise<{ redirect?: string; error?: string }> {
+	async redirect(@Param('shortUrl') shortUrl: string, @Response() res: ExpressRes): Promise<void> {
 		const url = await this.urlService.findUrlByShortUrl(shortUrl);
 		if (url) {
 			await this.urlService.trackClick(url);
-			return res.redirect(url.originalUrl);
+			res.redirect(url.originalUrl);
+			return;
 			//TODO se não for pelo navegador (postman), retornar uma mensagem dizendo para abrir pelo navegador
 		}
-		return res.status(404).json({ error: 'URL not found' });
+		res.status(404).json({ error: 'URL not found' });
 	}
 
 	@UseGuards(JwtAuthGuard)
