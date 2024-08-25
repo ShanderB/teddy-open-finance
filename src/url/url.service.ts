@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { Equal, IsNull, Repository } from 'typeorm';
 import { Url } from './url.entity';
 import { User } from '../users/user.entity';
 import { Click } from './click.entity';
@@ -17,7 +17,6 @@ export class UrlService {
 	) {}
 	async shortenUrl(originalUrl: string, user: User): Promise<Url> {
 		const urlDatabase = await this.findUrlByOriginalUrl(originalUrl);
-
 		if (urlDatabase) {
 			return urlDatabase;
 		}
@@ -32,12 +31,12 @@ export class UrlService {
 	}
 
 	async findUrlByShortUrl(shortUrl: string): Promise<Url> {
-		return this.urlRepository.findOne({ where: { shortUrl, deletedAt: Equal(null) }, cache: true });
+		return this.urlRepository.findOne({ where: { shortUrl, deletedAt: IsNull() }, cache: true });
 	}
 
 	async findUrlByOriginalUrl(originalUrl: string): Promise<Url> {
 		return this.urlRepository.findOne({
-			where: { originalUrl, deletedAt: Equal(null) },
+			where: { originalUrl, deletedAt: IsNull() },
 			cache: true
 		});
 	}
@@ -52,7 +51,7 @@ export class UrlService {
 			where: {
 				user: { id: user.id },
 				//If the user wants to see the deleted urls, it will show them, otherwise it will not show.
-				...(getMiscConfig().showDeletedUrls === 'false' && { deletedAt: Equal(null) })
+				...(getMiscConfig().showDeletedUrls === 'false' && { deletedAt: IsNull() })
 			},
 			relations: ['clicks']
 		});
@@ -60,7 +59,7 @@ export class UrlService {
 
 	async updateUrl(id: number, newOriginalUrl: string, user: User): Promise<Url> {
 		const url = await this.urlRepository.findOne({
-			where: { id, user: { id: user.id }, deletedAt: Equal(null) },
+			where: { id, user: { id: user.id }, deletedAt: IsNull() },
 			cache: true
 		});
 
@@ -74,7 +73,7 @@ export class UrlService {
 
 	async deleteUrl(id: number, user: User): Promise<void> {
 		const url = await this.urlRepository.findOne({
-			where: { id, user: { id: user.id }, deletedAt: Equal(null) },
+			where: { id, user: { id: user.id }, deletedAt: IsNull() },
 			cache: true
 		});
 
