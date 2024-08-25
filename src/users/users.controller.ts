@@ -20,7 +20,7 @@ export class UsersController {
 	async register(@Body() body: { email: string; password: string }): Promise<User> {
 		const existingUser = await this.usersService.findByEmail(body.email);
 		if (existingUser) {
-			throw new ConflictException('User already exists');
+			throw new ConflictException('Usuário já existe.');
 		}
 
 		return this.usersService.create(body.email, body.password);

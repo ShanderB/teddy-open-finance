@@ -18,7 +18,7 @@ async function bootstrap(): Promise<void> {
 
 	const config = new DocumentBuilder()
 		.setTitle('API de encurtamento de links')
-		.setDescription('API responsável por encurtar links, criar e autenticar usuários')
+		.setDescription('API responsável por encurtar links, criar e autenticar usuários.')
 		.setVersion('1.0')
 		.addBearerAuth()
 		.build();

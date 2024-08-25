@@ -50,7 +50,7 @@ export class UrlService {
 		return this.urlRepository.find({
 			where: {
 				user: { id: user.id },
-				//If the user wants to see the deleted urls, it will show them, otherwise it will not show.
+				//Se u usuário quiser ver as urls deletadas, ele irá mostrar, caso contrário não irá.
 				...(getMiscConfig().showDeletedUrls === 'false' && { deletedAt: IsNull() })
 			},
 			relations: ['clicks']
@@ -68,7 +68,7 @@ export class UrlService {
 			return this.urlRepository.save(url);
 		}
 
-		throw new NotFoundException('URL with provided information not found');
+		throw new NotFoundException('URL com o id fornecido não encontrado');
 	}
 
 	async deleteUrl(id: number, user: User): Promise<void> {
@@ -82,6 +82,6 @@ export class UrlService {
 			await this.urlRepository.save(url);
 			return;
 		}
-		throw new NotFoundException('URL id provided not found');
+		throw new NotFoundException('URL com o id fornecido não encontrado');
 	}
 }

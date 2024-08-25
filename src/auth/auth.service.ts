@@ -35,7 +35,7 @@ export class AuthService {
 			const decoded = this.jwtService.verify(token, jwtConstants.secret as JwtVerifyOptions);
 			return decoded;
 		} catch {
-			throw new UnauthorizedException('Invalid token');
+			throw new UnauthorizedException('Token inválido.');
 		}
 	}
 }

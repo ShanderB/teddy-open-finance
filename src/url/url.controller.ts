@@ -85,11 +85,11 @@ export class UrlController {
 			if (isBrowser) {
 				res.redirect(url.originalUrl);
 			} else {
-				res.status(421).json({ message: 'Please open this URL in a web browser.' });
+				res.status(421).json({ message: 'Por favor, faça o request em um navegador.' });
 			}
 			return;
 		}
-		res.status(404).json({ error: 'URL not found' });
+		res.status(404).json({ error: 'URL não encontrada.' });
 	}
 
 	@UseGuards(JwtAuthGuard)
