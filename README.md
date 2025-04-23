@@ -1,3 +1,6 @@
+melhorias: colocar code return.
+separar em arquivos.
+
 # Projeto de Encurtador de URLs
 
 ## Declarações
