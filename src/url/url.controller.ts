@@ -56,15 +56,11 @@ export class UrlController {
 		@Headers('authorization') authorization: string,
 		@Body('originalUrl') originalUrl: string
 	): Promise<Url> {
-		let user: User;
 		if (!originalUrl.trim()) {
 			throw new BadRequestException('É necessário adicionar uma URL.');
 		}
 
-		if (authorization) {
-			user = await this.getUserFromToken(authorization);
-		}
-		return this.urlService.shortenUrl(originalUrl, user);
+		return this.urlService.shortenUrl(originalUrl, await this.getUserFromToken(authorization));
 	}
 
 	@Get(':shortUrl')
@@ -94,7 +90,6 @@ export class UrlController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
-	@urlApiParam
 	@listUrlsApiOperation
 	@listUrlsApiResponse200
 	@urlsApiResponse401
