@@ -1,5 +1,6 @@
 melhorias: colocar code return.
 separar em arquivos.
+ajsutar schemas no swagger.
 
 # Projeto de Encurtador de URLs
 
